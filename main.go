@@ -17,5 +17,29 @@ func main() {
 	app.Description = "command-line tool for NEM"
 	app.Version = version
 
+	app.Commands = []cli.Command{
+		{
+			Name:   "status",
+			Usage:  "show NIS status",
+			Action: cmdStatus,
+		},
+	}
+
+	app.Action = cmdStatus
 	app.RunAndExitOnError()
+}
+
+func cmdStatus(c *cli.Context) error {
+
+	client, err := NewDefaultClient()
+	if err != nil {
+		return err
+	}
+
+	err = client.Status()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
