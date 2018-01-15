@@ -1,8 +1,6 @@
 package main
 
-import (
-	"github.com/urfave/cli"
-)
+import "github.com/urfave/cli"
 
 var (
 	version  string
@@ -31,12 +29,12 @@ func main() {
 
 func cmdStatus(c *cli.Context) error {
 
-	client, err := NewDefaultClient()
+	client, err := newDefaultClient()
 	if err != nil {
 		return err
 	}
 
-	err = client.Status()
+	err = client.status()
 	if err != nil {
 		return err
 	}

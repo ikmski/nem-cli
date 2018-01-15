@@ -2,55 +2,92 @@ package main
 
 import (
 	"bytes"
+	"context"
+	"encoding/json"
 	"fmt"
-	"log"
+	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"path"
 )
 
-type Client struct {
+type client struct {
 	URL        *url.URL
 	HTTPClient *http.Client
-
-	Logger *log.Logger
 }
 
-func NewClient(urlStr string, httpClient *http.Client, logger *log.Logger) (*Client, error) {
+func newClient(urlStr string, httpClient *http.Client) (*client, error) {
 
 	parsedURL, err := url.ParseRequestURI(urlStr)
 	if err != nil {
 		return nil, err
 	}
 
-	client := &Client{
+	client := &client{
 		URL:        parsedURL,
 		HTTPClient: httpClient,
-		Logger:     logger,
 	}
 
 	return client, nil
 }
 
-func NewDefaultClient() (*Client, error) {
+func newDefaultClient() (*client, error) {
 
-	var buf bytes.Buffer
-	logger := log.New(&buf, "INFO: ", log.Lshortfile)
-
-	return NewClient("http://185.117.22.111:7890/", http.DefaultClient, logger)
+	return newClient("http://go.nem.ninja:7890", http.DefaultClient)
 }
 
-func (c *Client) Status() error {
+func (c *client) newRequest(method string, spath string, body io.Reader) (*http.Request, error) {
 
 	url := *c.URL
-	url.Path = path.Join(c.URL.Path, "status")
+	url.Path = path.Join(c.URL.Path, spath)
 
-	res, err := c.HTTPClient.Get(url.String())
+	req, err := http.NewRequest(method, url.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx := context.Background()
+	req = req.WithContext(ctx)
+
+	return req, nil
+}
+
+func outputBody(res *http.Response) error {
+
+	defer res.Body.Close()
+	inputBuf, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("%v\n", res)
+	var outputBuf bytes.Buffer
+	err = json.Indent(&outputBuf, inputBuf, "", "    ")
+	if err != nil {
+		return err
+	}
+
+	fmt.Print(outputBuf.String())
+
+	return nil
+}
+
+func (c *client) status() error {
+
+	req, err := c.newRequest("GET", "status", nil)
+	if err != nil {
+		return err
+	}
+
+	res, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return err
+	}
+
+	err = outputBody(res)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
