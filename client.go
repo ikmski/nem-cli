@@ -34,7 +34,7 @@ func newClient(urlStr string, httpClient *http.Client) (*client, error) {
 
 func newDefaultClient() (*client, error) {
 
-	return newClient("http://go.nem.ninja:7890", http.DefaultClient)
+	return newClient(fmt.Sprintf("http://%s:7890", nisAddress), http.DefaultClient)
 }
 
 func (c *client) newRequest(method string, spath string, body io.Reader) (*http.Request, error) {

@@ -7,6 +7,8 @@ var (
 	revision string
 )
 
+var nisAddress string = "176.9.68.110"
+
 func main() {
 
 	app := cli.NewApp()
@@ -14,6 +16,15 @@ func main() {
 	app.Usage = "NEM CLI"
 	app.Description = "command-line tool for NEM"
 	app.Version = version
+
+	app.Flags = []cli.Flag{
+		cli.StringFlag{
+			Name:        "address, addr",
+			Value:       "176.9.68.110",
+			Usage:       "address of the NEM super node",
+			Destination: &nisAddress,
+		},
+	}
 
 	app.Commands = []cli.Command{
 		{
