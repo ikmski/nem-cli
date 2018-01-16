@@ -9,7 +9,7 @@ func cmdHeartbeat(c *cli.Context) error {
 		return err
 	}
 
-	err = client.heartbeat()
+	err = client.sendRequest("GET", "heartbeat", nil)
 	if err != nil {
 		return err
 	}
@@ -24,7 +24,7 @@ func cmdStatus(c *cli.Context) error {
 		return err
 	}
 
-	err = client.status()
+	err = client.sendRequest("GET", "status", nil)
 	if err != nil {
 		return err
 	}
