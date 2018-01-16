@@ -17,27 +17,23 @@ func main() {
 
 	app.Commands = []cli.Command{
 		{
-			Name:   "status",
-			Usage:  "show NIS status",
-			Action: cmdStatus,
+			Name:  "status",
+			Usage: "NIS status related commands",
+			Subcommands: []cli.Command{
+				{
+					Name:   "heartbeat",
+					Usage:  "show NIS heartbeat",
+					Action: cmdHeartbeat,
+				},
+				{
+					Name:   "status",
+					Usage:  "show NIS status",
+					Action: cmdStatus,
+				},
+			},
 		},
 	}
 
 	app.Action = cmdStatus
 	app.RunAndExitOnError()
-}
-
-func cmdStatus(c *cli.Context) error {
-
-	client, err := newDefaultClient()
-	if err != nil {
-		return err
-	}
-
-	err = client.status()
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

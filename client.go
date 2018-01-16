@@ -72,6 +72,26 @@ func outputBody(res *http.Response) error {
 	return nil
 }
 
+func (c *client) heartbeat() error {
+
+	req, err := c.newRequest("GET", "heartbeat", nil)
+	if err != nil {
+		return err
+	}
+
+	res, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return err
+	}
+
+	err = outputBody(res)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (c *client) status() error {
 
 	req, err := c.newRequest("GET", "status", nil)
