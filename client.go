@@ -9,23 +9,19 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"path"
 )
 
 type client struct {
-	URL        *url.URL
+	Host       string
+	Port       string
 	HTTPClient *http.Client
 }
 
-func newClient(urlStr string, httpClient *http.Client) (*client, error) {
-
-	parsedURL, err := url.ParseRequestURI(urlStr)
-	if err != nil {
-		return nil, err
-	}
+func newClient(host string, port string, httpClient *http.Client) (*client, error) {
 
 	client := &client{
-		URL:        parsedURL,
+		Host:       host,
+		Port:       port,
 		HTTPClient: httpClient,
 	}
 
@@ -34,15 +30,19 @@ func newClient(urlStr string, httpClient *http.Client) (*client, error) {
 
 func newDefaultClient() (*client, error) {
 
-	return newClient(fmt.Sprintf("http://%s:7890", nisAddress), http.DefaultClient)
+	return newClient(nisAddress, "7890", http.DefaultClient)
 }
 
 func (c *client) newRequest(method string, spath string, body io.Reader) (*http.Request, error) {
 
-	url := *c.URL
-	url.Path = path.Join(c.URL.Path, spath)
+	urlStr := fmt.Sprintf("http://%s:%s/%s", c.Host, c.Port, spath)
 
-	req, err := http.NewRequest(method, url.String(), body)
+	parsedURL, err := url.ParseRequestURI(urlStr)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(method, parsedURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
