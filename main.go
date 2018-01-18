@@ -43,6 +43,23 @@ func main() {
 				},
 			},
 		},
+		{
+			Name:  "account",
+			Usage: "NIS account related commands",
+			Subcommands: []cli.Command{
+				{
+					Name:  "data",
+					Usage: "show account data",
+					Flags: []cli.Flag{
+						cli.BoolFlag{
+							Name:  "public-key",
+							Usage: "search from public key",
+						},
+					},
+					Action: cmdAccountData,
+				},
+			},
+		},
 	}
 
 	app.Action = cmdStatus
