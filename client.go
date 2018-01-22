@@ -50,6 +50,8 @@ func (c *client) newRequest(method string, spath string, body io.Reader) (*http.
 	ctx := context.Background()
 	req = req.WithContext(ctx)
 
+	req.Header.Set("Content-Type", "application/json")
+
 	return req, nil
 }
 
@@ -74,7 +76,7 @@ func outputBody(res *http.Response) error {
 
 func (c *client) sendRequest(method string, spath string, body io.Reader) error {
 
-	req, err := c.newRequest(method, spath, nil)
+	req, err := c.newRequest(method, spath, body)
 	if err != nil {
 		return err
 	}

@@ -60,6 +60,28 @@ func main() {
 				},
 			},
 		},
+		{
+			Name:  "chain",
+			Usage: "block chain related commands",
+			Subcommands: []cli.Command{
+				{
+					Name:   "height",
+					Usage:  "get the current height of the block chain",
+					Action: cmdChainHeight,
+				},
+				{
+					Name:  "block",
+					Usage: "get a block from the chain that has the given height",
+					Flags: []cli.Flag{
+						cli.BoolFlag{
+							Name:  "json",
+							Usage: "argument in JSON format",
+						},
+					},
+					Action: cmdChainBlock,
+				},
+			},
+		},
 	}
 
 	app.Action = cmdStatus
